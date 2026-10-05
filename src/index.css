@@ -153,3 +153,48 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(139, 92, 246, 0.6);
 }
+
+/* Oculto na tela normal */
+#relatorio-impressao-ronda {
+  display: none;
+}
+
+/* Estilos oficiais de impressão para o relatório em PDF */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 10mm 12mm 10mm;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Oculta toda a aplicação SPA na impressão */
+  #root, .no-print, aside, nav, header, button {
+    display: none !important;
+  }
+
+  /* Exibe exclusivamente o relatório de impressão */
+  #relatorio-impressao-ronda {
+    display: block !important;
+    visibility: visible !important;
+    position: relative !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    box-shadow: none !important;
+    font-family: Arial, Helvetica, sans-serif !important;
+  }
+
+  #relatorio-impressao-ronda * {
+    visibility: visible !important;
+  }
+}

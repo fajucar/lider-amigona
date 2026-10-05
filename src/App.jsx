@@ -3,6 +3,7 @@ import regrasCondominio from "./data/regras.json";
 import vagasCadastro from "./data/vagas.json";
 import { montarContextoRegras, citacaoCurta, buscarArtigosRelevantes } from "./lib/buscaRegras.js";
 import { montarSystemPrompt } from "./config/promptAssistente.js";
+import RondaIButtons from "./RondaIButtons.jsx";
 
 // ---------- Persistência segura ----------
 const store = {
@@ -1217,6 +1218,7 @@ const ICONE_PATHS = {
   escudo: { path: "M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" },
   lapis: { path: "M12 20h9|M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" },
   lixeira: { path: "M3 6h18|M8 6V4h8v2|M6 6l1 15h10l1-15|M10 11v6M14 11v6" },
+  localizacao: { circles: [[12, 10, 3]], path: "M12 21s-7-4.35-7-11a7 7 0 0 1 14 0c0 6.65-7 11-7 11z" },
 };
 
 function Icone({ nome, tamanho = 20, espessura = 2.75, cor = "currentColor", style }) {
@@ -3112,11 +3114,12 @@ export default function App() {
   const progressoRotinas = rotinasTotal ? Math.round((rotinasFeitas / rotinasTotal) * 100) : 0;
 
   const NAV_ITENS = [
-    { id: "ocorrencias", label: "Ocorrências", icone: "livro" },
-    { id: "turno", label: "Histórico", icone: "relogio", badge: ocorrenciasHoje.length },
-    { id: "consultar", label: "Consultar", icone: "mensagem" },
-    { id: "rotinas", label: "Rotinas", icone: "checkQuadro" },
-    { id: "regras", label: "Regras", icone: "menu" },
+    { id: "ocorrencias", label: "Ocorrências", labelMobile: "Ocorrências", icone: "livro" },
+    { id: "turno", label: "Histórico", labelMobile: "Histórico", icone: "relogio", badge: ocorrenciasHoje.length },
+    { id: "consultar", label: "Consultar", labelMobile: "Consultar", icone: "mensagem" },
+    { id: "rotinas", label: "Rotinas", labelMobile: "Rotinas", icone: "checkQuadro" },
+    { id: "ibuttons", label: "Ronda iButtons", labelMobile: "iButtons", icone: "localizacao" },
+    { id: "regras", label: "Regras", labelMobile: "Regras", icone: "menu" },
   ];
 
   if (!carregado) {
@@ -3241,21 +3244,21 @@ export default function App() {
 
             {/* Navegação flutuante inferior (mobile dock) */}
             <nav
-              className="md:hidden grid grid-cols-5"
+              className="md:hidden grid grid-cols-6"
               style={{
-                position: "fixed", left: 12, right: 12, bottom: "calc(env(safe-area-inset-bottom, 0px) + 10px)", zIndex: 40,
+                position: "fixed", left: 8, right: 8, bottom: "calc(env(safe-area-inset-bottom, 0px) + 10px)", zIndex: 40,
                 background: cor.navBg, backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", boxShadow: cor.navSombra,
-                border: `1px solid ${cor.cartaoBorda}`, borderRadius: 24, padding: "8px 4px",
+                border: `1px solid ${cor.cartaoBorda}`, borderRadius: 24, padding: "8px 2px",
               }}
             >
               {NAV_ITENS.map((item) => {
                 const ativo = aba === item.id;
                 return (
                   <button key={item.id} onClick={() => setAba(item.id)} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, position: "relative", padding: "4px 0" }}>
-                    <div style={{ padding: "4px 12px", borderRadius: 14, background: ativo ? "rgba(212, 175, 95,0.20)" : "transparent" }}>
-                      <Icone nome={item.icone} tamanho={19} cor={ativo ? cor.verde : cor.iconeInativo} />
+                    <div style={{ padding: "4px 8px", borderRadius: 14, background: ativo ? "rgba(212, 175, 95,0.20)" : "transparent" }}>
+                      <Icone nome={item.icone} tamanho={18} cor={ativo ? cor.verde : cor.iconeInativo} />
                     </div>
-                    <span style={{ fontSize: 10, fontWeight: ativo ? 700 : 500, color: ativo ? cor.textoPrincipal : cor.textoNavInativo }}>{item.label}</span>
+                    <span style={{ fontSize: 9.5, fontWeight: ativo ? 700 : 500, color: ativo ? cor.textoPrincipal : cor.textoNavInativo, whiteSpace: "nowrap" }}>{item.labelMobile || item.label}</span>
                     {item.badge > 0 && (
                       <span style={{ position: "absolute", top: 0, right: "50%", transform: "translateX(16px)", background: cor.verde, color: cor.textoSobreVerde, fontSize: 9, fontWeight: 700, borderRadius: 999, minWidth: 15, height: 15, padding: "0 3px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                         {item.badge}
@@ -3832,6 +3835,17 @@ export default function App() {
               Irregularidade? Foto + iButton → grupo Vigia (WhatsApp).
             </p>
           </div>
+        )}
+
+        {aba === "ibuttons" && (
+          <RondaIButtons
+            cor={cor}
+            tema={tema}
+            nomeLider={nomeLider}
+            posto={posto}
+            store={store}
+            Icone={Icone}
+          />
         )}
       </main>
 
